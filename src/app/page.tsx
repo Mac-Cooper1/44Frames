@@ -63,7 +63,7 @@ export default function LandingPage() {
             44 Frames
           </h1>
           <p className="text-xl text-gray-600 mb-8">
-            Transform real estate photos into stunning motion clips with AI-powered cinematic effects
+            Transform real estate photos into stunning motion clips with AI-powered cinematic effects ✨
           </p>
           <div className="flex justify-center space-x-4">
             <Badge variant="secondary" className="text-lg px-4 py-2">
