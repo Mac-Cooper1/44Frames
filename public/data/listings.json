@@ -1,0 +1,103 @@
+[
+  {
+    "id": "listing-001",
+    "source": "zillow",
+    "url": "https://www.zillow.com/homedetails/123-Main-St-New-York-NY-10001/12345678_zpid/",
+    "address": "123 Main Street",
+    "city": "New York",
+    "state": "NY",
+    "photos": [
+      {
+        "id": "photo-001",
+        "src": "/sample-assets/images/kitchen-01.jpg",
+        "orientation": "H",
+        "tag": "Interior",
+        "room": "kitchen"
+      },
+      {
+        "id": "photo-002",
+        "src": "/sample-assets/images/living-room-01.jpg",
+        "orientation": "H",
+        "tag": "Interior",
+        "room": "living_room"
+      },
+      {
+        "id": "photo-003",
+        "src": "/sample-assets/images/bedroom-01.jpg",
+        "orientation": "V",
+        "tag": "Interior",
+        "room": "bedroom"
+      },
+      {
+        "id": "photo-004",
+        "src": "/sample-assets/images/bathroom-01.jpg",
+        "orientation": "V",
+        "tag": "Interior",
+        "room": "bathroom"
+      },
+      {
+        "id": "photo-005",
+        "src": "/sample-assets/images/exterior-front.jpg",
+        "orientation": "H",
+        "tag": "Exterior"
+      },
+      {
+        "id": "photo-006",
+        "src": "/sample-assets/images/exterior-back.jpg",
+        "orientation": "H",
+        "tag": "Exterior"
+      },
+      {
+        "id": "photo-007",
+        "src": "/sample-assets/images/dining-room-01.jpg",
+        "orientation": "H",
+        "tag": "Interior",
+        "room": "dining_room"
+      },
+      {
+        "id": "photo-008",
+        "src": "/sample-assets/images/master-bedroom-01.jpg",
+        "orientation": "V",
+        "tag": "Interior",
+        "room": "master_bedroom"
+      }
+    ]
+  },
+  {
+    "id": "listing-002",
+    "source": "redfin",
+    "url": "https://www.redfin.com/CA/San-Francisco/456-Oak-Ave-94102/home/12345678",
+    "address": "456 Oak Avenue",
+    "city": "San Francisco",
+    "state": "CA",
+    "photos": [
+      {
+        "id": "photo-009",
+        "src": "/sample-assets/images/kitchen-02.jpg",
+        "orientation": "H",
+        "tag": "Interior",
+        "room": "kitchen"
+      },
+      {
+        "id": "photo-010",
+        "src": "/sample-assets/images/living-room-02.jpg",
+        "orientation": "H",
+        "tag": "Interior",
+        "room": "living_room"
+      },
+      {
+        "id": "photo-011",
+        "src": "/sample-assets/images/office-01.jpg",
+        "orientation": "V",
+        "tag": "Interior",
+        "room": "office"
+      },
+      {
+        "id": "photo-012",
+        "src": "/sample-assets/images/exterior-side.jpg",
+        "orientation": "H",
+        "tag": "Exterior"
+      }
+    ]
+  }
+]
