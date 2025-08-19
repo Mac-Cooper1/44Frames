@@ -23,8 +23,14 @@ export default function VideoEditor() {
   }));
 
   useEffect(() => {
-    // Scoped hotkeys
-    hotkeys.filter = () => true;
+    // Ignore hotkeys when typing in inputs/textareas or contenteditable
+    hotkeys.filter = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (!target) return true;
+      const tag = target.tagName;
+      const editable = (target as HTMLElement).isContentEditable;
+      return !(tag === 'INPUT' || tag === 'TEXTAREA' || editable);
+    };
     hotkeys("space", (e) => { e.preventDefault(); isPlaying ? pause() : play(); });
     hotkeys("left", (e) => { e.preventDefault(); seek(Math.max(0, playhead - 1/30)); });
     hotkeys("right", (e) => { e.preventDefault(); seek(playhead + 1/30); });

@@ -14,6 +14,7 @@ export function RightPanel() {
     editorExport: s.editorExport,
     getDuration: s.getDuration,
   }));
+  const setEditorExport = useAppStore((s) => (updates: Partial<typeof s.editorExport>) => s.editorExport = { ...s.editorExport, ...updates } as any);
   const [progress, setProgress] = useState<{ phase: string; percent: number } | null>(null);
   const [downUrl, setDownUrl] = useState<string>("");
   const [isExporting, setIsExporting] = useState(false);
@@ -44,15 +45,19 @@ export function RightPanel() {
     <div className="w-72 bg-gray-800 border-l border-gray-700 flex flex-col">
       <div className="bg-gray-800 border-b border-gray-700 py-3 px-3 text-white font-semibold text-base">Export Settings</div>
       <div className="p-3 space-y-3">
-        <div className="grid grid-cols-2 gap-2 text-xs text-gray-200">
-          <label>Resolution</label>
-          <div>{editorExport.width}x{editorExport.height}</div>
+        <div className="grid grid-cols-2 gap-2 text-xs text-gray-200 items-center">
+          <label>Width</label>
+          <input className="bg-gray-700 border border-gray-600 rounded px-2 py-1 text-xs" type="number" value={editorExport.width} onChange={(e) => setEditorExport({ width: parseInt(e.target.value || "0") })} />
+          <label>Height</label>
+          <input className="bg-gray-700 border border-gray-600 rounded px-2 py-1 text-xs" type="number" value={editorExport.height} onChange={(e) => setEditorExport({ height: parseInt(e.target.value || "0") })} />
           <label>FPS</label>
-          <div>{editorExport.fps}</div>
-          <label>Bitrate</label>
-          <div>{editorExport.bitrateKbps} kbps</div>
+          <input className="bg-gray-700 border border-gray-600 rounded px-2 py-1 text-xs" type="number" min={1} max={120} value={editorExport.fps} onChange={(e) => setEditorExport({ fps: parseInt(e.target.value || "0") })} />
+          <label>Bitrate (kbps)</label>
+          <input className="bg-gray-700 border border-gray-600 rounded px-2 py-1 text-xs" type="number" min={100} step={100} value={editorExport.bitrateKbps} onChange={(e) => setEditorExport({ bitrateKbps: parseInt(e.target.value || "0") })} />
           <label>Format</label>
-          <div>{editorExport.format}</div>
+          <select className="bg-gray-700 border border-gray-600 rounded px-2 py-1 text-xs" value={editorExport.format} onChange={(e) => setEditorExport({ format: e.target.value as any })}>
+            <option value="mp4">mp4</option>
+          </select>
         </div>
         {overCap && (
           <div className="text-xs text-yellow-400">Demo export limited to 60s. Current timeline is {totalDuration.toFixed(1)}s. Trim or split to reduce length.</div>

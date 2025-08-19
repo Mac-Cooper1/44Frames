@@ -19,21 +19,24 @@ export function Preview() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const active = useMemo(() => findClipAtTime(clips, timeline, playhead), [clips, timeline, playhead]);
+  const lastClipIdRef = useRef<string | null>(null);
 
-  // Update video src when crossing segment boundaries
+  // Update video src only when clip changes; seek only when needed
   useEffect(() => {
     const v = videoRef.current;
     if (!v || !active) return;
-    const src = active.clip.src;
-    if (!v.src.endsWith(src)) {
-      v.src = src;
+    const currentClipId = active.clip.id;
+    if (lastClipIdRef.current !== currentClipId) {
+      lastClipIdRef.current = currentClipId;
+      v.src = active.clip.src;
     }
-    const local = active.localTime + active.clip.in;
-    // Ensure currentTime within bounds
-    v.currentTime = Math.max(0, local);
-  }, [active?.clip.src, active?.localTime, active?.clip.in]);
+    const desired = active.localTime + active.clip.in;
+    if (Math.abs(v.currentTime - desired) > 0.03) {
+      v.currentTime = Math.max(0, desired);
+    }
+  }, [active?.clip.id, active?.clip.src, active?.localTime, active?.clip.in]);
 
-  // Sync audio element
+  // Sync audio element more loosely to avoid stutters
   useEffect(() => {
     const a = audioRef.current;
     if (!a || !music) return;
@@ -41,7 +44,9 @@ export function Preview() {
       a.src = music.src;
     }
     const t = Math.max(0, playhead - (music.offset || 0));
-    a.currentTime = t;
+    if (Math.abs(a.currentTime - t) > 0.05) {
+      a.currentTime = t;
+    }
   }, [music?.src, music?.offset, playhead]);
 
   // Play/pause synchronization
