@@ -1,49 +1,57 @@
-export type Photo = {
+export type Template = {
   id: string;
-  src: string;           // /sample-assets/images/...
-  orientation: "H" | "V";
-  tag: "Interior" | "Exterior";
-  room?: string;         // "kitchen", "living_room", etc.
+  name: string;
+  thumbnail: string;
+  duration: number; // in seconds
+  shots: number;
+  format: "16:9" | "9:16" | "1:1" | "4:3";
+  style: "Cinematic" | "Documentary" | "Commercial" | "Artistic" | "Corporate";
+  credits: number;
+  isNew?: boolean;
+  isFavorite?: boolean;
+  rating?: number;
+  usageCount?: number;
 };
 
-export type Listing = {
+export type Shot = {
   id: string;
-  source: "zillow" | "redfin" | "agent";
-  url?: string;
-  address: string;
-  city: string;
-  state: string;
-  photos: Photo[];
+  templateId: string;
+  order: number;
+  firstFrame?: File;
+  lastFrame?: File;
+  cameraMovement: "pan" | "dolly" | "orbit" | "truck" | "zoom" | "static";
+  generatedClips: GeneratedClip[];
+  selectedClipId?: string;
 };
 
-export type Preset = {
+export type GeneratedClip = {
   id: string;
-  name: string; // e.g., "Kitchen Slow Dolly"
-  angle: "High" | "Eye" | "Low";
-  shot: "Dolly" | "Pan" | "Tilt" | "Zoom" | "Parallax" | "Static";
-  speed: "Very Slow" | "Slow";
-  durationSec: 8 | 10 | 12 | 15;
+  shotId: string;
+  previewUrl: string;
+  isSelected: boolean;
 };
 
-export type ClipStatus = "Queued" | "Running" | "Succeeded" | "NeedsWork" | "Failed";
-
-export type ClipJob = {
+export type Project = {
   id: string;
-  photoId: string;
-  presetId: string;
-  prompt: string;
-  status: ClipStatus;
-  startedAt?: number;
-  finishedAt?: number;
-  outputClipSrc?: string; // /sample-assets/clips/...
-  replacesJobId?: string; // for revisions
+  name: string;
+  templateId: string;
+  shots: Shot[];
+  exportSettings: ExportSettings;
+  createdAt: number;
 };
 
-export type ReviewDecision = "Pending" | "Approved" | "Revise" | "Deleted";
+export type ExportSettings = {
+  resolution: "1080p" | "4K" | "720p";
+  bitrate: "5Mbps" | "10Mbps" | "20Mbps";
+  codec: "H.264" | "H.265" | "ProRes";
+  format: "MP4" | "MOV" | "AVI";
+  frameRate: "24fps" | "30fps" | "60fps";
+  duration: number; // in seconds
+};
 
-export type ClipReview = {
-  jobId: string;
-  decision: ReviewDecision;
-  revisedJobId?: string; // A/B pair
-  decidedAt?: number;
+export type FilterState = {
+  formats: string[];
+  styles: string[];
+  searchQuery: string;
+  sortBy: "new" | "mostUsed" | "favorites" | "highestRated";
 };

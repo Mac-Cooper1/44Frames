@@ -1,51 +1,129 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { Listing, Preset, ClipJob, ClipReview, Photo } from "@/lib/types";
+import type { Template, Project, Shot, FilterState, ExportSettings } from "@/lib/types";
 
 type AppState = {
-  listing?: Listing;
-  uploads: Photo[];                    // photos added via upload
-  selectedPhotoIds: string[];
-  presets: Preset[];
-  jobs: ClipJob[];                     // all jobs ever created
-  reviews: Record<string, ClipReview>; // keyed by jobId
-  setListing: (l: Listing) => void;
-  addUploads: (p: Photo[]) => void;
-  setSelected: (ids: string[]) => void;
-  upsertPreset: (p: Preset) => void;
-  enqueueJobs: (jobs: ClipJob[]) => void;
-  updateJob: (job: ClipJob) => void;
-  setReview: (r: ClipReview) => void;
-  resetDemo: () => void;
+  templates: Template[];
+  currentProject?: Project;
+  selectedTemplate?: Template;
+  filterState: FilterState;
+  isTemplateDetailOpen: boolean;
+  
+  // Actions
+  setTemplates: (templates: Template[]) => void;
+  setCurrentProject: (project: Project) => void;
+  setSelectedTemplate: (template: Template) => void;
+  openTemplateDetail: () => void;
+  closeTemplateDetail: () => void;
+  updateFilterState: (filters: Partial<FilterState>) => void;
+  createProject: (templateId: string, projectName: string) => void;
+  updateShot: (shotId: string, updates: Partial<Shot>) => void;
+  selectClip: (shotId: string, clipId: string) => void;
+  updateExportSettings: (settings: Partial<ExportSettings>) => void;
+  resetProject: () => void;
 };
 
 export const useAppStore = create<AppState>()(
   persist(
     (set, get) => ({
-      listing: undefined,
-      uploads: [],
-      selectedPhotoIds: [],
-      presets: [],
-      jobs: [],
-      reviews: {},
-      setListing: (l) => set({ listing: l }),
-      addUploads: (p) => set({ uploads: [...get().uploads, ...p] }),
-      setSelected: (ids) => set({ selectedPhotoIds: ids }),
-      upsertPreset: (p) =>
-        set({ presets: [...get().presets.filter(x => x.id !== p.id), p] }),
-      enqueueJobs: (newJobs) => set({ jobs: [...get().jobs, ...newJobs] }),
-      updateJob: (job) =>
-        set({ jobs: get().jobs.map(j => (j.id === job.id ? job : j)) }),
-      setReview: (r) => set({ reviews: { ...get().reviews, [r.jobId]: r } }),
-      resetDemo: () =>
-        set({
-          listing: undefined,
-          uploads: [],
-          selectedPhotoIds: [],
-          jobs: [],
-          reviews: {},
-        }),
+      templates: [],
+      currentProject: undefined,
+      selectedTemplate: undefined,
+      filterState: {
+        formats: [],
+        styles: [],
+        searchQuery: "",
+        sortBy: "new"
+      },
+      isTemplateDetailOpen: false,
+      
+      setTemplates: (templates) => set({ templates }),
+      setCurrentProject: (project) => set({ currentProject: project }),
+      setSelectedTemplate: (template) => set({ selectedTemplate: template }),
+      openTemplateDetail: () => set({ isTemplateDetailOpen: true }),
+      closeTemplateDetail: () => set({ isTemplateDetailOpen: false }),
+      updateFilterState: (filters) => set({ 
+        filterState: { ...get().filterState, ...filters } 
+      }),
+      createProject: (templateId, projectName) => {
+        const template = get().templates.find(t => t.id === templateId);
+        if (!template) return;
+        
+        const project: Project = {
+          id: `project-${Date.now()}`,
+          name: projectName,
+          templateId,
+          shots: Array.from({ length: template.shots }, (_, i) => ({
+            id: `shot-${i}`,
+            templateId,
+            order: i,
+            cameraMovement: "pan",
+            generatedClips: []
+          })),
+          exportSettings: {
+            resolution: "1080p",
+            bitrate: "10Mbps",
+            codec: "H.264",
+            format: "MP4",
+            frameRate: "30fps",
+            duration: template.duration
+          },
+          createdAt: Date.now()
+        };
+        
+        set({ currentProject: project });
+      },
+      updateShot: (shotId, updates) => {
+        const project = get().currentProject;
+        if (!project) return;
+        
+        const updatedShots = project.shots.map(shot => 
+          shot.id === shotId ? { ...shot, ...updates } : shot
+        );
+        
+        set({ 
+          currentProject: { ...project, shots: updatedShots } 
+        });
+      },
+      selectClip: (shotId, clipId) => {
+        const project = get().currentProject;
+        if (!project) return;
+        
+        const updatedShots = project.shots.map(shot => {
+          if (shot.id === shotId) {
+            return {
+              ...shot,
+              selectedClipId: clipId,
+              generatedClips: shot.generatedClips.map(clip => ({
+                ...clip,
+                isSelected: clip.id === clipId
+              }))
+            };
+          }
+          return shot;
+        });
+        
+        set({ 
+          currentProject: { ...project, shots: updatedShots } 
+        });
+      },
+      updateExportSettings: (settings) => {
+        const project = get().currentProject;
+        if (!project) return;
+        
+        set({ 
+          currentProject: { 
+            ...project, 
+            exportSettings: { ...project.exportSettings, ...settings } 
+          } 
+        });
+      },
+      resetProject: () => set({ 
+        currentProject: undefined, 
+        selectedTemplate: undefined,
+        isTemplateDetailOpen: false 
+      })
     }),
-    { name: "demo-app" }
+    { name: "44frames-app" }
   )
 );

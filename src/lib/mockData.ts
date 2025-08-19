@@ -1,153 +1,110 @@
-import type { Listing, Preset } from "@/lib/types";
+import type { Template } from "./types";
 
-export const samplePresets: Preset[] = [
+export const mockTemplates: Template[] = [
   {
-    id: "preset-1",
-    name: "Kitchen Slow Dolly",
-    angle: "Eye",
-    shot: "Dolly",
-    speed: "Slow",
-    durationSec: 10,
+    id: "template-1",
+    name: "Cinematic Real Estate",
+    thumbnail: "/sample-assets/images/living-room-01.jpg",
+    duration: 15,
+    shots: 3,
+    format: "16:9",
+    style: "Cinematic",
+    credits: 5,
+    isNew: true,
+    rating: 4.8,
+    usageCount: 1247
   },
   {
-    id: "preset-2",
-    name: "Living Room High Pan",
-    angle: "High",
-    shot: "Pan",
-    speed: "Very Slow",
-    durationSec: 12,
+    id: "template-2",
+    name: "Kitchen Elegance",
+    thumbnail: "/sample-assets/images/kitchen-01.jpg",
+    duration: 12,
+    shots: 2,
+    format: "16:9",
+    style: "Commercial",
+    credits: 3,
+    rating: 4.6,
+    usageCount: 892
   },
   {
-    id: "preset-3",
-    name: "Bedroom Eye Zoom",
-    angle: "Eye",
-    shot: "Zoom",
-    speed: "Slow",
-    durationSec: 8,
+    id: "template-3",
+    name: "Bedroom Serenity",
+    thumbnail: "/sample-assets/images/bedroom-01.jpg",
+    duration: 10,
+    shots: 2,
+    format: "9:16",
+    style: "Artistic",
+    credits: 4,
+    rating: 4.9,
+    usageCount: 567
   },
   {
-    id: "preset-4",
-    name: "Bathroom Low Tilt",
-    angle: "Low",
-    shot: "Tilt",
-    speed: "Very Slow",
-    durationSec: 15,
+    id: "template-4",
+    name: "Living Space Flow",
+    thumbnail: "/sample-assets/images/living-room-01.jpg",
+    duration: 18,
+    shots: 4,
+    format: "16:9",
+    style: "Documentary",
+    credits: 6,
+    rating: 4.7,
+    usageCount: 2341
   },
+  {
+    id: "template-5",
+    name: "Modern Kitchen",
+    thumbnail: "/sample-assets/images/kitchen-01.jpg",
+    duration: 14,
+    shots: 3,
+    format: "4:3",
+    style: "Corporate",
+    credits: 4,
+    rating: 4.5,
+    usageCount: 756
+  },
+  {
+    id: "template-6",
+    name: "Master Suite",
+    thumbnail: "/sample-assets/images/bedroom-01.jpg",
+    duration: 16,
+    shots: 3,
+    format: "16:9",
+    style: "Cinematic",
+    credits: 5,
+    rating: 4.8,
+    usageCount: 1103
+  },
+  {
+    id: "template-7",
+    name: "Open Concept",
+    thumbnail: "/sample-assets/images/living-room-01.jpg",
+    duration: 20,
+    shots: 5,
+    format: "16:9",
+    style: "Documentary",
+    credits: 8,
+    rating: 4.9,
+    usageCount: 1892
+  },
+  {
+    id: "template-8",
+    name: "Gourmet Kitchen",
+    thumbnail: "/sample-assets/images/kitchen-01.jpg",
+    duration: 13,
+    shots: 2,
+    format: "9:16",
+    style: "Commercial",
+    credits: 3,
+    rating: 4.6,
+    usageCount: 634
+  }
 ];
 
-export const sampleListings: Listing[] = [
-  {
-    id: "listing-1",
-    source: "zillow",
-    url: "https://zillow.com/homedetails/123-main-st",
-    address: "123 Main Street",
-    city: "Austin",
-    state: "TX",
-    photos: [
-      {
-        id: "photo-1",
-        src: "/sample-assets/images/kitchen-1.jpg",
-        orientation: "H",
-        tag: "Interior",
-        room: "kitchen",
-      },
-      {
-        id: "photo-2",
-        src: "/sample-assets/images/living-room-1.jpg",
-        orientation: "H",
-        tag: "Interior",
-        room: "living_room",
-      },
-      {
-        id: "photo-3",
-        src: "/sample-assets/images/bedroom-1.jpg",
-        orientation: "H",
-        tag: "Interior",
-        room: "bedroom",
-      },
-      {
-        id: "photo-4",
-        src: "/sample-assets/images/bathroom-1.jpg",
-        orientation: "H",
-        tag: "Interior",
-        room: "bathroom",
-      },
-      {
-        id: "photo-5",
-        src: "/sample-assets/images/exterior-1.jpg",
-        orientation: "H",
-        tag: "Exterior",
-      },
-      {
-        id: "photo-6",
-        src: "/sample-assets/images/kitchen-2.jpg",
-        orientation: "V",
-        tag: "Interior",
-        room: "kitchen",
-      },
-      {
-        id: "photo-7",
-        src: "/sample-assets/images/living-room-2.jpg",
-        orientation: "V",
-        tag: "Interior",
-        room: "living_room",
-      },
-      {
-        id: "photo-8",
-        src: "/sample-assets/images/bedroom-2.jpg",
-        orientation: "V",
-        tag: "Interior",
-        room: "bedroom",
-      },
-    ],
-  },
-  {
-    id: "listing-2",
-    source: "redfin",
-    url: "https://redfin.com/house/456-oak-ave",
-    address: "456 Oak Avenue",
-    city: "Austin",
-    state: "TX",
-    photos: [
-      {
-        id: "photo-9",
-        src: "/sample-assets/images/kitchen-3.jpg",
-        orientation: "H",
-        tag: "Interior",
-        room: "kitchen",
-      },
-      {
-        id: "photo-10",
-        src: "/sample-assets/images/living-room-3.jpg",
-        orientation: "H",
-        tag: "Interior",
-        room: "living_room",
-      },
-      {
-        id: "photo-11",
-        src: "/sample-assets/images/bedroom-3.jpg",
-        orientation: "H",
-        tag: "Interior",
-        room: "bedroom",
-      },
-      {
-        id: "photo-12",
-        src: "/sample-assets/images/exterior-2.jpg",
-        orientation: "H",
-        tag: "Exterior",
-      },
-    ],
-  },
-];
-
-export function getListingById(id: string): Listing | undefined {
-  return sampleListings.find(listing => listing.id === id);
-}
-
-export function getAllListings(): Listing[] {
-  return sampleListings;
-}
-
-export function getPresets(): Preset[] {
-  return samplePresets;
-}
+export const formatOptions = ["16:9", "9:16", "1:1", "4:3"];
+export const styleOptions = ["Cinematic", "Documentary", "Commercial", "Artistic", "Corporate"];
+export const cameraMovementOptions = ["pan", "dolly", "orbit", "truck", "zoom", "static"];
+export const resolutionOptions = ["1080p", "4K", "720p"];
+export const bitrateOptions = ["5Mbps", "10Mbps", "20Mbps"];
+export const codecOptions = ["H.264", "H.265", "ProRes"];
+export const formatOptionsExport = ["MP4", "MOV", "AVI"];
+export const frameRateOptions = ["24fps", "30fps", "60fps"];

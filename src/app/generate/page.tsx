@@ -1,181 +1,308 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Play, CheckCircle, Clock } from "lucide-react";
+import { Upload, Camera, Play, ArrowRight, Loader2 } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
-import { JobList } from "@/components/JobList";
-import { TopNav } from "@/components/TopNav";
-import { jobEngine } from "@/lib/jobEngine";
-import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { cameraMovementOptions } from "@/lib/mockData";
 
-export default function GeneratePage() {
+export default function ShotSetup() {
   const router = useRouter();
-  const { jobs, updateJob } = useAppStore();
-  const [isEngineRunning, setIsEngineRunning] = useState(false);
-  
+  const { currentProject, updateShot } = useAppStore();
+  const [projectName, setProjectName] = useState("");
+  const [generatingShots, setGeneratingShots] = useState<Set<string>>(new Set());
+
   useEffect(() => {
-    if (jobs.length === 0) {
-      router.push("/prompt");
-      return;
+    if (currentProject) {
+      setProjectName(currentProject.name);
     }
-    
-    // Start the job engine if not already running
-    if (!isEngineRunning) {
-      setIsEngineRunning(true);
-      jobEngine.startEngine((updatedJob) => {
-        // Update the job in the store
-        updateJob(updatedJob);
-        
-        // Show toast for completed jobs
-        if (updatedJob.status === "Succeeded") {
-          toast.success(`Clip generated successfully!`);
-        } else if (updatedJob.status === "NeedsWork") {
-          toast.warning(`Clip needs revision`);
-        } else if (updatedJob.status === "Failed") {
-          toast.error(`Clip generation failed`);
-        }
-      });
-    }
-  }, [jobs.length, router, isEngineRunning, updateJob]);
-  
-  const handleContinueToReview = () => {
-    const completedJobs = jobs.filter(job => 
-      job.status === "Succeeded" || job.status === "NeedsWork" || job.status === "Failed"
-    );
-    
-    if (completedJobs.length > 0) {
-      router.push("/review");
-    } else {
-      toast.info("Wait for jobs to complete before reviewing");
-    }
-  };
-  
-  const handleBackToPrompt = () => {
-    router.push("/prompt");
-  };
-  
-  if (jobs.length === 0) {
+  }, [currentProject]);
+
+  if (!currentProject) {
+    router.push("/");
     return null;
   }
-  
-  const totalJobs = jobs.length;
-  const completedJobs = jobs.filter(job => 
-    job.status === "Succeeded" || job.status === "NeedsWork" || job.status === "Failed"
-  ).length;
-  const runningJobs = jobs.filter(job => job.status === "Running").length;
-  const queuedJobs = jobs.filter(job => job.status === "Queued").length;
-  
-  const isAllComplete = completedJobs === totalJobs;
-  
-  return (
-    <div className="min-h-screen bg-background">
-      <TopNav />
+
+  const handleImageUpload = (shotId: string, type: "firstFrame" | "lastFrame") => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        updateShot(shotId, { [type]: file });
+      }
+    };
+    input.click();
+  };
+
+  const handleGenerateShot = async (shotId: string) => {
+    setGeneratingShots(prev => new Set(prev).add(shotId));
+    
+    // Simulate AI generation
+    setTimeout(() => {
+      const mockClips = Array.from({ length: 4 }, (_, i) => ({
+        id: `clip-${shotId}-${i}`,
+        shotId,
+        previewUrl: `/sample-assets/clips/sample-clip-0${i + 1}.mp4`,
+        isSelected: false
+      }));
       
-      <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center space-x-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleBackToPrompt}
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Prompt
-            </Button>
+      updateShot(shotId, { generatedClips: mockClips });
+      setGeneratingShots(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(shotId);
+        return newSet;
+      });
+    }, 2000);
+  };
+
+  const handleGenerateAll = async () => {
+    const shotIds = currentProject.shots.map(shot => shot.id);
+    setGeneratingShots(new Set(shotIds));
+    
+    // Simulate generating all shots
+    setTimeout(() => {
+      currentProject.shots.forEach(shot => {
+        const mockClips = Array.from({ length: 4 }, (_, i) => ({
+          id: `clip-${shot.id}-${i}`,
+          shotId: shot.id,
+          previewUrl: `/sample-assets/clips/sample-clip-0${i + 1}.mp4`,
+          isSelected: false
+        }));
+        
+        updateShot(shot.id, { generatedClips: mockClips });
+      });
+      
+      setGeneratingShots(new Set());
+    }, 3000);
+  };
+
+  const handleContinue = () => {
+    router.push("/review");
+  };
+
+  const canContinue = currentProject.shots.every(shot => 
+    shot.firstFrame && shot.generatedClips.length > 0
+  );
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center">
+              <h1 className="text-2xl font-bold text-gray-900">44 Frames</h1>
+            </div>
             
-            <div>
-              <h1 className="text-3xl font-bold">Generate Clips</h1>
-              <div className="flex items-center space-x-2 mt-2">
-                <Badge variant="secondary">
-                  {totalJobs} job{totalJobs !== 1 ? "s" : ""} in queue
-                </Badge>
-                <span className="text-muted-foreground">
-                  Processing with AI-powered motion generation
-                </span>
-              </div>
-            </div>
-          </div>
-          
-          <div className="flex items-center space-x-3">
-            {isAllComplete ? (
-              <Button onClick={handleContinueToReview} className="bg-green-600 hover:bg-green-700">
-                <CheckCircle className="w-4 h-4 mr-2" />
-                Continue to Review
-              </Button>
-            ) : (
-              <div className="flex items-center space-x-2">
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                <span className="text-sm text-blue-600">Processing...</span>
-              </div>
-            )}
+            <nav className="hidden md:flex space-x-8">
+              <a href="/" className="text-gray-600 hover:text-gray-900">Templates</a>
+              <a href="#" className="text-gray-600 hover:text-gray-900">Resources</a>
+              <a href="#" className="text-gray-600 hover:text-gray-900">Pricing</a>
+              <a href="#" className="text-gray-600 hover:text-gray-900">Contact</a>
+            </nav>
           </div>
         </div>
-        
-        {/* Status Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-muted/50 rounded-lg p-4 text-center">
-            <div className="text-2xl font-bold text-blue-600">{totalJobs}</div>
-            <div className="text-sm text-muted-foreground">Total Jobs</div>
-          </div>
-          <div className="bg-muted/50 rounded-lg p-4 text-center">
-            <div className="text-2xl font-bold text-blue-600">{runningJobs}</div>
-            <div className="text-sm text-muted-foreground">Running</div>
-          </div>
-          <div className="bg-muted/50 rounded-lg p-4 text-center">
-            <div className="text-2xl font-bold text-gray-600">{queuedJobs}</div>
-            <div className="text-sm text-muted-foreground">Queued</div>
-          </div>
-          <div className="bg-muted/50 rounded-lg p-4 text-center">
-            <div className="text-2xl font-bold text-green-600">{completedJobs}</div>
-            <div className="text-sm text-muted-foreground">Completed</div>
+      </header>
+
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Project Name */}
+        <div className="mb-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">Shot Setup</h2>
+          <div className="flex items-center gap-4">
+            <label className="text-sm font-medium text-gray-700">Project Name:</label>
+            <Input
+              value={projectName}
+              onChange={(e) => setProjectName(e.target.value)}
+              placeholder="Enter project name..."
+              className="max-w-xs"
+            />
           </div>
         </div>
-        
-        {/* Job List */}
-        <JobList jobs={jobs} />
-        
-        {/* Action Buttons */}
-        <div className="mt-8 flex items-center justify-between">
+
+        {/* Generate All Button */}
+        <div className="flex justify-end mb-6">
           <Button
-            variant="outline"
-            onClick={handleBackToPrompt}
+            onClick={handleGenerateAll}
+            disabled={generatingShots.size > 0}
+            className="flex items-center gap-2"
           >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Prompt Composer
+            {generatingShots.size > 0 ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Generating All...
+              </>
+            ) : (
+              <>
+                <Play className="w-4 h-4" />
+                Generate All
+              </>
+            )}
           </Button>
-          
-          {isAllComplete && (
-            <Button
-              onClick={handleContinueToReview}
-              className="bg-green-600 hover:bg-green-700"
-            >
-              <CheckCircle className="w-4 h-4 mr-2" />
-              Review Generated Clips
-            </Button>
-          )}
         </div>
-        
-        {/* Progress Notice */}
-        {!isAllComplete && (
-          <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <div className="flex items-center space-x-3">
-              <Clock className="w-5 h-5 text-blue-600" />
-              <div>
-                <p className="text-sm font-medium text-blue-800">
-                  Generation in Progress
-                </p>
-                <p className="text-xs text-blue-600 mt-1">
-                  Processing {runningJobs} clips concurrently. 
-                  {queuedJobs > 0 && ` ${queuedJobs} remaining in queue.`}
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
+
+        {/* Shots */}
+        <div className="space-y-6">
+          {currentProject.shots.map((shot, index) => (
+            <Card key={shot.id}>
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  <span>Shot {index + 1}</span>
+                  <Badge variant="outline">
+                    {shot.cameraMovement.charAt(0).toUpperCase() + shot.cameraMovement.slice(1)}
+                  </Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                  {/* First Frame Upload */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700">First Frame</label>
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+                      {shot.firstFrame ? (
+                        <div className="space-y-2">
+                          <img
+                            src={URL.createObjectURL(shot.firstFrame)}
+                            alt="First frame"
+                            className="w-full h-32 object-cover rounded"
+                          />
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleImageUpload(shot.id, "firstFrame")}
+                          >
+                            Change
+                          </Button>
+                        </div>
+                      ) : (
+                        <div
+                          className="cursor-pointer"
+                          onClick={() => handleImageUpload(shot.id, "firstFrame")}
+                        >
+                          <Upload className="w-8 h-8 mx-auto text-gray-400 mb-2" />
+                          <p className="text-sm text-gray-600">Upload First Frame</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Last Frame Upload (Optional) */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700">
+                      Last Frame <span className="text-gray-500">(Optional)</span>
+                    </label>
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+                      {shot.lastFrame ? (
+                        <div className="space-y-2">
+                          <img
+                            src={URL.createObjectURL(shot.lastFrame)}
+                            alt="Last frame"
+                            className="w-full h-32 object-cover rounded"
+                          />
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleImageUpload(shot.id, "lastFrame")}
+                          >
+                            Change
+                          </Button>
+                        </div>
+                      ) : (
+                        <div
+                          className="cursor-pointer"
+                          onClick={() => handleImageUpload(shot.id, "lastFrame")}
+                        >
+                          <Upload className="w-8 h-8 mx-auto text-gray-400 mb-2" />
+                          <p className="text-sm text-gray-600">Upload Last Frame</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Camera Movement Selection */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700">Camera Movement</label>
+                    <Select
+                      value={shot.cameraMovement}
+                      onValueChange={(value) => updateShot(shot.id, { cameraMovement: value as any })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {cameraMovementOptions.map((movement) => (
+                          <SelectItem key={movement} value={movement}>
+                            {movement.charAt(0).toUpperCase() + movement.slice(1)}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {/* Generate Button */}
+                <div className="flex justify-between items-center">
+                  <Button
+                    onClick={() => handleGenerateShot(shot.id)}
+                    disabled={!shot.firstFrame || generatingShots.has(shot.id)}
+                    variant="outline"
+                    className="flex items-center gap-2"
+                  >
+                    {generatingShots.has(shot.id) ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Generating...
+                      </>
+                    ) : (
+                      <>
+                        <Camera className="w-4 h-4" />
+                        Generate
+                      </>
+                    )}
+                  </Button>
+
+                  {/* Generated Clips Preview */}
+                  {shot.generatedClips.length > 0 && (
+                    <div className="flex gap-2">
+                      {shot.generatedClips.slice(0, 2).map((clip) => (
+                        <div
+                          key={clip.id}
+                          className="w-16 h-16 bg-gray-200 rounded border-2 border-gray-300 flex items-center justify-center"
+                        >
+                          <Play className="w-6 h-6 text-gray-600" />
+                        </div>
+                      ))}
+                      {shot.generatedClips.length > 2 && (
+                        <div className="w-16 h-16 bg-gray-200 rounded border-2 border-gray-300 flex items-center justify-center">
+                          <span className="text-sm text-gray-600">+{shot.generatedClips.length - 2}</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {/* Continue Button */}
+        <div className="flex justify-end mt-8">
+          <Button
+            onClick={handleContinue}
+            disabled={!canContinue}
+            size="lg"
+            className="flex items-center gap-2"
+          >
+            Continue
+            <ArrowRight className="w-4 h-4" />
+          </Button>
+        </div>
       </div>
     </div>
   );

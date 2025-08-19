@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "44 Frames - Real Estate Photo to Motion",
-  description: "Transform real estate photos into stunning motion clips with AI-powered cinematic effects",
+  title: "44 Frames - AI-Powered Video Creation Platform",
+  description: "Transform still images into motion videos using pre-designed templates and AI technology",
 };
 
 export default function RootLayout({
