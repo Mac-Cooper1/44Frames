@@ -1,52 +1,113 @@
-# 44 Frames - Real Estate Photo to Motion Demo
+# 44 Frames - AI-Powered Video Creation Platform
 
-A Next.js demo application that simulates a self-serve tool for converting real estate listing photos into short motion clips using AI-powered cinematic effects.
+A responsive React/Next.js web application demo for 44 Frames, an AI-powered video creation platform that turns still images into motion videos using pre-designed templates.
 
-## 🚀 Features
+## Features
 
-- **Intake**: Paste Zillow/Redfin URLs or upload photos
-- **Gallery & Selection**: Multi-select photos with filtering and image details
-- **Prompt Composer**: Choose presets and customize prompts with variations
-- **Batch Generation**: Simulated job queue with concurrency and progress tracking
-- **Review & Revisions**: A/B comparison modal for clip approval/editing
-- **Export**: Download approved clips as ZIP and CSV manifest
-- **Subscription Status**: Billing information display
+### 🎬 Template Library
+- Browse and filter video templates by format and style
+- Search functionality with real-time results
+- Sort by: New, Most Used, Favorites, Highest Rated
+- Responsive grid layout with template cards
 
-## 🛠️ Tech Stack
+### 📋 Template Details
+- Right-side drawer panel with template information
+- Template specifications (duration, shots, format, credits)
+- Similar templates recommendations
+- "Use This Template" and "Buy Credits" actions
 
-- **Framework**: Next.js 15 (App Router) + TypeScript
-- **Styling**: Tailwind CSS + shadcn/ui components
-- **State Management**: Zustand with localStorage persistence
-- **UI Components**: Radix UI primitives with custom styling
-- **Build Tool**: Turbopack for development
-- **Deployment**: Vercel-ready
+### 🎥 Shot Setup
+- Upload first and last frame images for each shot
+- Select camera movement (pan, dolly, orbit, truck, zoom, static)
+- Individual shot generation with AI simulation
+- "Generate All" functionality for batch processing
 
-## 📦 Installation
+### ✨ Clip Selection
+- Review 4 generated clips per shot
+- Single selection per shot with visual feedback
+- Continue to video editor when all shots are selected
 
-```bash
-# Install dependencies
-npm install
+### 🎞️ Video Editor
+- Three-panel layout: Selected Clips, Video Preview, Export Settings
+- Customizable export settings (resolution, bitrate, codec, format, frame rate)
+- Timeline view with ordered clips and music track
+- Download functionality for final video
 
-# Run development server
-npm run dev
+## Tech Stack
 
-# Build for production
-npm run build
+- **Framework**: Next.js 14 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **UI Components**: shadcn/ui
+- **Icons**: lucide-react
+- **State Management**: Zustand
+- **Responsive Design**: Mobile-first approach
+
+## Getting Started
+
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+2. Run the development server:
+   ```bash
+   npm run dev
+   ```
+
+3. Open [http://localhost:3000](http://localhost:3000) in your browser
+
+## Project Structure
+
+```
+src/
+├── app/                    # Next.js app router pages
+│   ├── page.tsx          # Template Library (Figma1)
+│   ├── generate/         # Shot Setup (Figma3)
+│   ├── review/           # Clip Selection (Figma4)
+│   └── export/           # Video Editor (Figma5)
+├── components/            # Reusable UI components
+│   └── TemplateDetailPanel.tsx
+├── lib/                  # Utilities and data
+│   ├── types.ts         # TypeScript type definitions
+│   └── mockData.ts      # Sample template data
+└── store/                # State management
+    └── useAppStore.ts    # Zustand store
 ```
 
-## 🎯 Demo Flow
+## Demo Flow
 
-1. **Landing Page**: Input URL or upload photos
-2. **Gallery**: Select photos for processing
-3. **Prompt**: Choose cinematic presets and customize
-4. **Generate**: Watch jobs process in real-time
-5. **Review**: Approve, revise, or delete clips
-6. **Export**: Download final assets and manifest
+1. **Start**: Template Library page with filterable template grid
+2. **Select**: Click template → opens detail panel → "Use This Template"
+3. **Setup**: Shot Setup page for image uploads and camera movement selection
+4. **Generate**: AI simulation creates 4 clips per shot
+5. **Select**: Choose best clip for each shot
+6. **Edit**: Video editor with export settings and timeline
+7. **Download**: Final video export (placeholder MP4)
 
-## 🌐 Live Demo
+## Responsive Features
 
-[Deployed on Vercel](https://your-demo-url.vercel.app)
+- Sidebar filters collapse to dropdown on mobile
+- Template grid adapts to 1-2 columns on small screens
+- Editor layout stacks vertically on mobile devices
+- Touch-friendly interface elements
 
-## 📝 License
+## Placeholder Content
 
-This is a demo project for demonstration purposes.
+- Sample images from `/public/sample-assets/images/`
+- Mock video clips from `/public/sample-assets/clips/`
+- AI generation simulation with loading states
+- Download creates placeholder MP4 file
+
+## Future Enhancements
+
+- Real AI video generation integration
+- User authentication and project management
+- Advanced video editing tools
+- Template marketplace
+- Social sharing features
+- Analytics and performance tracking
+
+## License
+
+This is a demo application for the 44 Frames platform.
