@@ -111,7 +111,7 @@ export async function exportTimeline(
   // Mix music if present
   if (music?.src) {
     progress("mix", 10, "Mixing audio");
-    const musicData = await fetchFile(music.src);
+    const musicData = music.file ? await fetchFile(music.file) : await fetchFile(music.src);
     const musicName = music.src.split("/").pop() || "music.mp3";
     await ffmpeg.writeFile(musicName, musicData);
     const offsetMs = Math.max(0, Math.round((music.offset || 0) * 1000));

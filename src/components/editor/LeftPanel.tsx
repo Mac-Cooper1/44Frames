@@ -96,6 +96,34 @@ export function LeftPanel() {
                 <p className="text-xs text-gray-400 break-all">{music?.src?.split("/").pop()}</p>
               </div>
             </div>
+            <div className="mt-2">
+              <label className="text-[11px] text-gray-300">Choose audio</label>
+              <input
+                type="file"
+                accept="audio/*"
+                className="mt-1 block w-full text-[11px] text-gray-200"
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (!f) return;
+                  const url = URL.createObjectURL(f);
+                  setMusic({ src: url, offset: 0, gain: 1, file: f });
+                }}
+              />
+            </div>
+            <div className="mt-2">
+              <label className="text-[11px] text-gray-300">Choose audio</label>
+              <input
+                type="file"
+                accept="audio/*"
+                className="mt-1 block w-full text-[11px] text-gray-200"
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (!f) return;
+                  const url = URL.createObjectURL(f);
+                  setMusic({ src: url, offset: 0, gain: 1, file: f });
+                }}
+              />
+            </div>
             <div ref={waveformRef} className="mt-2 rounded overflow-hidden" />
             <div className="mt-2 flex items-center gap-2">
               <label className="text-xs text-gray-300">Offset</label>
@@ -127,4 +155,3 @@ export function LeftPanel() {
 }
 
 export default LeftPanel;
-

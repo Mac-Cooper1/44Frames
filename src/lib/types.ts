@@ -87,6 +87,7 @@ export type MusicTrack = {
   offset: number; // seconds offset into timeline where music starts
   gain: number; // 0..1 linear gain
   duration?: number; // optional detected duration
+  file?: File; // optional local file for client-side use
 };
 
 export type TimelineLayoutItem = {
