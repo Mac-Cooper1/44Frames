@@ -55,3 +55,42 @@ export type FilterState = {
   searchQuery: string;
   sortBy: "new" | "mostUsed" | "favorites" | "highestRated";
 };
+
+// =======================
+// Editor-specific types
+// =======================
+
+// Avoid name collision with existing ExportSettings used by templates/projects
+export type EditorExportSettings = {
+  width: number;
+  height: number;
+  fps: number; // frames per second
+  bitrateKbps: number;
+  format: "mp4"; // keep demo to mp4
+};
+
+export type Clip = {
+  id: string;
+  src: string; // public path to media
+  duration: number; // seconds, source media duration
+  in: number; // seconds from start of src
+  out: number; // seconds from start of src (out > in)
+};
+
+export type TimelineClip = {
+  id: string; // references Clip.id
+  start: number; // start time in timeline seconds
+};
+
+export type MusicTrack = {
+  src: string;
+  offset: number; // seconds offset into timeline where music starts
+  gain: number; // 0..1 linear gain
+  duration?: number; // optional detected duration
+};
+
+export type TimelineLayoutItem = {
+  clipId: string;
+  startPx: number;
+  widthPx: number;
+};
