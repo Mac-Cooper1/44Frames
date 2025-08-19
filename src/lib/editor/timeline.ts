@@ -13,6 +13,11 @@ export function computeTimelineLayout(clips: Clip[], timeline: TimelineClip[], p
   });
 }
 
+// Convenience alias to satisfy alternate API naming in some components/specs
+export function computeLayout(clips: Clip[], timeline: TimelineClip[], pxPerSec: number): TimelineLayoutItem[] {
+  return computeTimelineLayout(clips, timeline, pxPerSec);
+}
+
 export function findClipAtTime(
   clips: Clip[],
   timeline: TimelineClip[],
@@ -35,6 +40,22 @@ export function snapTimeMs(timeSec: number, stepMs: number): number {
   const ms = timeSec * 1000;
   const snapped = Math.round(ms / stepMs) * stepMs;
   return snapped;
+}
+
+// Grid-based snapping in seconds (default grid 50ms = 0.05s)
+export function snap(timeSec: number, gridSec: number = 0.05): number {
+  if (gridSec <= 0) return timeSec;
+  return Math.round(timeSec / gridSec) * gridSec;
+}
+
+// Unit-safe helpers for px/sec conversions
+export function secToPx(seconds: number, pxPerSec: number): number {
+  return seconds * pxPerSec;
+}
+
+export function pxToSec(pixels: number, pxPerSec: number): number {
+  if (pxPerSec === 0) return 0;
+  return pixels / pxPerSec;
 }
 
 export function totalDurationSec(clips: Clip[], timeline: TimelineClip[]): number {
