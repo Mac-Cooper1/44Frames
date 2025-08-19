@@ -55,8 +55,6 @@ export type FilterState = {
   searchQuery: string;
   sortBy: "new" | "mostUsed" | "favorites" | "highestRated";
 };
-<<<<<<< Current (Your changes)
-=======
 
 // =======================
 // Editor-specific types
@@ -96,4 +94,3 @@ export type TimelineLayoutItem = {
   startPx: number;
   widthPx: number;
 };
->>>>>>> Incoming (Background Agent changes)

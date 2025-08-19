@@ -292,8 +292,6 @@ export const useAppStore = create<AppState>()(
     { name: "44frames-app" }
   )
 );
-<<<<<<< Current (Your changes)
-=======
 
 function stripState(state: AppState) {
   // keep only editor state for history
@@ -308,4 +306,3 @@ function stripState(state: AppState) {
   };
   return keep as any;
 }
->>>>>>> Incoming (Background Agent changes)
